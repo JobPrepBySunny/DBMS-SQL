@@ -1,0 +1,170 @@
+Here is the **CTE (WITH, RECURSIVE)** section — explained with the same simple, crystal-clear style.
+
+---
+
+# 🟦 **CTE (Common Table Expressions)**
+
+A **CTE** is like a *temporary named result* that exists only for one query.
+
+Think of it as:
+👉 “Create a temporary table for this query only.”
+
+You create a CTE using the **WITH** keyword.
+
+---
+
+# ✅ **1) Simple CTE (WITH)**
+
+**Meaning:**
+“Create a temporary table using a SELECT query, and use it in the main query.”
+
+**Explanation:**
+
+* Makes long queries easy to read
+* Avoids repeating the same SELECT
+* Exists only during that single query
+* Must be used right after `WITH`
+
+**Example:**
+
+```sql
+WITH sales_data AS (
+    SELECT user_id, SUM(amount) AS total_sales
+    FROM orders
+    GROUP BY user_id
+)
+SELECT * FROM sales_data WHERE total_sales > 1000;
+```
+
+This means:
+➡️ First create a temporary result called `sales_data` that stores total sales of each user.
+➡️ Then select only users whose total sales are more than 1000.
+
+---
+
+# 🟦 **How CTE Works (Simple Explanation)**
+
+1. SQL runs the CTE query first.
+2. Stores the result *as a temporary table*.
+3. The main query uses that temporary result.
+
+---
+
+# 🟦 **2) Multiple CTEs**
+
+You can define more than one CTE using commas.
+
+**Example:**
+
+```sql
+WITH 
+user_totals AS (
+    SELECT user_id, SUM(amount) AS total FROM orders GROUP BY user_id
+),
+top_users AS (
+    SELECT user_id FROM user_totals WHERE total > 5000
+)
+SELECT * FROM top_users;
+```
+
+This means:
+➡️ Step 1: Calculate total order amount per user.
+➡️ Step 2: From that, select users whose total exceeds 5000.
+➡️ Step 3: Output those users.
+
+---
+
+# 🟦 **3) RECURSIVE CTE**
+
+A **Recursive CTE** is used for repeating patterns, like:
+
+* Family tree
+* Employee → Manager hierarchy
+* Categories → Subcategories
+* Folder → Subfolder structure
+* Generating numbers (1–10)
+
+It has **two parts**:
+1️⃣ Anchor Query → runs once
+2️⃣ Recursive Query → keeps running until no more rows
+
+---
+
+## 🔥 Example: Simple Number Generator (1 to 5)
+
+```sql
+WITH RECURSIVE numbers AS (
+    SELECT 1 AS n             -- Anchor
+    UNION ALL
+    SELECT n + 1 FROM numbers -- Recursive
+    WHERE n < 5
+)
+SELECT * FROM numbers;
+```
+
+This means:
+➡️ Start with n = 1.
+➡️ Keep adding 1 until n reaches 5.
+➡️ Output: 1, 2, 3, 4, 5.
+
+---
+
+## 🔥 Example: Employee–Manager Hierarchy
+
+```sql
+WITH RECURSIVE emp_tree AS (
+    -- Anchor: Start with the CEO (manager_id IS NULL)
+    SELECT id, name, manager_id
+    FROM employees
+    WHERE manager_id IS NULL
+
+    UNION ALL
+
+    -- Recursive: Get employees who report to the above person
+    SELECT e.id, e.name, e.manager_id
+    FROM employees e
+    JOIN emp_tree et ON e.manager_id = et.id
+)
+SELECT * FROM emp_tree;
+```
+
+This means:
+➡️ Step 1: Start from the top-level employee (CEO).
+➡️ Step 2: Find all employees whose manager is the CEO.
+➡️ Step 3: Then find employees under those employees.
+➡️ Repeat until no further hierarchy.
+
+---
+
+# 🟦 **4) When To Use a CTE?**
+
+Use CTE when:
+✔ Query is too long and needs readability
+✔ You want to avoid repeating subqueries
+✔ Working with hierarchical data
+✔ Breaking complex logic into smaller steps
+✔ Doing recursive calculations
+
+---
+
+# 🟦 **5) CTE vs Subquery (Difference)**
+
+| Feature              | CTE       | Subquery          |
+| -------------------- | --------- | ----------------- |
+| Reusable             | ✔ Yes     | ❌ No              |
+| Readability          | ✔ High    | ❌ Hard to read    |
+| Recursive support    | ✔ Yes     | ❌ No              |
+| Exists for           | One query | One location only |
+| Can reference itself | ✔ Yes     | ❌ No              |
+
+---
+
+# ✔️ Next Section?
+
+Choose the next one:
+
+👉 **Window Functions (ROW_NUMBER, LAG, LEAD, etc.)**
+👉 **Date & Time Functions**
+👉 **Conditional Logic (CASE, COALESCE)**
+
+Just reply: **Window Functions** / **Date Functions** / **Conditional Logic**
