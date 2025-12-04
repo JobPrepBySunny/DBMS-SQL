@@ -1,0 +1,206 @@
+Here is the **Triggers** section — explained clearly and simply just like you want.
+
+---
+
+# 🟦 **Triggers**
+
+A **Trigger** is an automatic action that runs **when something happens** on a table.
+
+👉 Example events: INSERT, UPDATE, DELETE
+👉 Database executes trigger **without you calling it**
+👉 Used to maintain consistency, logs, history, or validation
+
+Think of a trigger like:
+**“Whenever this happens → automatically do that.”**
+
+---
+
+# 🔥 Types of Trigger Timing
+
+* **BEFORE** → Run trigger *before* the action
+* **AFTER** → Run trigger *after* the action
+
+---
+
+# 🔥 Types of Trigger Events
+
+* INSERT → when a new row is added
+* UPDATE → when a row is modified
+* DELETE → when a row is removed
+
+---
+
+## **1) CREATE TRIGGER (BEFORE INSERT)**
+
+**Meaning:**
+“Before inserting a new row, perform this action.”
+
+**Explanation:**
+
+* Useful for setting default values
+* Useful for validating data
+* Runs **before** the row is inserted
+
+**Example:**
+
+```sql
+CREATE TRIGGER set_created_at
+BEFORE INSERT ON users
+FOR EACH ROW
+SET NEW.created_at = NOW();
+```
+
+This means:
+➡️ Whenever a new user is inserted, automatically set `created_at` to the current timestamp.
+
+---
+
+## **2) CREATE TRIGGER (AFTER INSERT)**
+
+**Meaning:**
+“After inserting a row, perform an action.”
+
+**Explanation:**
+
+* Used for logs, audit tables, notifications
+* Runs **after** the row is successfully added
+
+**Example:**
+
+```sql
+CREATE TRIGGER log_new_user
+AFTER INSERT ON users
+FOR EACH ROW
+INSERT INTO logs(message)
+VALUES (CONCAT('New user added: ', NEW.name));
+```
+
+This means:
+➡️ Whenever a new user is added, insert a log entry recording their name.
+
+---
+
+## **3) BEFORE UPDATE Trigger**
+
+**Meaning:**
+“Run some logic before a row is updated.”
+
+**Explanation:**
+
+* Can validate or modify values
+* Can prevent wrong updates
+
+**Example:**
+
+```sql
+CREATE TRIGGER update_modified_time
+BEFORE UPDATE ON products
+FOR EACH ROW
+SET NEW.updated_at = NOW();
+```
+
+This means:
+➡️ Before updating a product, update its `updated_at` timestamp.
+
+---
+
+## **4) AFTER UPDATE Trigger**
+
+**Meaning:**
+“Do something after a row is updated.”
+
+**Example:**
+
+```sql
+CREATE TRIGGER log_price_change
+AFTER UPDATE ON products
+FOR EACH ROW
+INSERT INTO price_logs(product_id, old_price, new_price)
+VALUES (OLD.id, OLD.price, NEW.price);
+```
+
+This means:
+➡️ When a product price changes, save old & new price in a log.
+
+---
+
+## **5) BEFORE DELETE Trigger**
+
+**Meaning:**
+“Run logic before deleting a row.”
+
+**Example:**
+
+```sql
+CREATE TRIGGER backup_before_delete
+BEFORE DELETE ON users
+FOR EACH ROW
+INSERT INTO deleted_users_backup
+VALUES (OLD.id, OLD.name, OLD.email);
+```
+
+This means:
+➡️ Before a user is deleted, save their data in a backup table.
+
+---
+
+## **6) AFTER DELETE Trigger**
+
+**Meaning:**
+“Do something after a row is deleted.”
+
+**Example:**
+
+```sql
+CREATE TRIGGER log_delete
+AFTER DELETE ON users
+FOR EACH ROW
+INSERT INTO logs(message)
+VALUES (CONCAT('User deleted: ', OLD.name));
+```
+
+This means:
+➡️ After a user is deleted, add a log entry.
+
+---
+
+## **7) Trigger Keywords: OLD vs NEW**
+
+| Keyword | Used In        | Meaning                 |
+| ------- | -------------- | ----------------------- |
+| **NEW** | INSERT, UPDATE | The new row values      |
+| **OLD** | UPDATE, DELETE | The previous row values |
+
+Examples:
+
+* `NEW.name` → value being inserted/updated
+* `OLD.name` → value before update or before delete
+
+---
+
+## **8) DROP TRIGGER**
+
+**Meaning:**
+“Remove a trigger.”
+
+**Example:**
+
+```sql
+DROP TRIGGER log_new_user;
+```
+
+This means:
+➡️ Delete the trigger so it stops running automatically.
+
+---
+
+# ✔️ Next Section?
+
+Which section should I explain next?
+
+👉 **CTE (WITH, RECURSIVE)**
+👉 **Window Functions (ROW_NUMBER, LAG, LEAD)**
+👉 **Date & Time Functions**
+👉 **Conditional Logic**
+
+Tell me: **Continue CTE** or whichever you want.
