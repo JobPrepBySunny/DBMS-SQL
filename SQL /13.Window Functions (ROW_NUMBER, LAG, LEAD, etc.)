@@ -1,0 +1,245 @@
+Here is the **Window Functions** section — explained in the same clear, beginner-friendly style you prefer.
+
+---
+
+# 🟦 **Window Functions (OVER, PARTITION BY, ORDER BY)**
+
+Window functions allow you to:
+
+👉 Look at **other rows** without actually grouping or merging them
+👉 Perform ranking, running totals, comparisons, and trend analysis
+
+Window functions work using:
+
+### **OVER()**
+
+Defines *which rows* the function should look at.
+
+### **PARTITION BY**
+
+Splits rows into groups (like GROUP BY).
+But unlike GROUP BY, original rows are **not collapsed**.
+
+### **ORDER BY**
+
+Defines the order inside the window.
+
+---
+
+# 🟩 **1) ROW_NUMBER()**
+
+**Meaning:**
+“Give a unique number to each row, based on ordering.”
+
+**Explanation:**
+
+* Starts at 1 for each partition
+* No ties — every row gets a different number
+* Useful for picking top N rows per group
+
+**Example:**
+
+```sql
+SELECT name, salary,
+       ROW_NUMBER() OVER (ORDER BY salary DESC) AS rank_num
+FROM employees;
+```
+
+This means:
+➡️ Assign rank 1 to the highest salary, 2 to next, and so on.
+
+---
+
+# 🟩 **2) RANK()**
+
+**Meaning:**
+“Give a rank, but allow ties — same values get same rank.”
+
+**Explanation:**
+
+* Same salary → same rank
+* Skips numbers after ties (1, 2, 2, 4)
+
+**Example:**
+
+```sql
+SELECT name, salary,
+       RANK() OVER (ORDER BY salary DESC) AS rnk
+FROM employees;
+```
+
+This means:
+➡️ If two employees have the same salary, both get the same rank.
+
+---
+
+# 🟩 **3) DENSE_RANK()**
+
+**Meaning:**
+“Like RANK but **no skipped numbers**.”
+
+**Explanation:**
+
+* Same value → same rank
+* Next distinct value → next rank (1, 2, 2, 3)
+
+**Example:**
+
+```sql
+SELECT name, salary,
+       DENSE_RANK() OVER (ORDER BY salary DESC) AS dense_rnk
+FROM employees;
+```
+
+This means:
+➡️ Ties still get the same rank, but numbering remains continuous.
+
+---
+
+# 🟩 **4) LAG(column, offset)**
+
+**Meaning:**
+“Look at the value from the previous row.”
+
+**Explanation:**
+
+* LAG helps compare the current row with the previous one
+* Used for trends, difference calculation, time series analysis
+* If there is no previous row → returns NULL
+
+**Example:**
+
+```sql
+SELECT date, temperature,
+       LAG(temperature) OVER (ORDER BY date) AS previous_temp
+FROM weather;
+```
+
+This means:
+➡️ Look at the row just above the current row and return its temperature.
+➡️ First row gets NULL.
+
+---
+
+# 🟩 **5) LEAD(column, offset)**
+
+**Meaning:**
+“Look at the value from the next row.”
+
+**Explanation:**
+
+* Opposite of LAG
+* Used to compare today’s value with tomorrow’s value
+* If next row doesn’t exist → returns NULL
+
+**Example:**
+
+```sql
+SELECT date, temperature,
+       LEAD(temperature) OVER (ORDER BY date) AS next_temp
+FROM weather;
+```
+
+This means:
+➡️ Look at the row below the current row and return its temperature.
+
+---
+
+# 🟩 **6) NTILE(n)**
+
+**Meaning:**
+“Divide rows into n equal groups.”
+
+**Explanation:**
+
+* Splits data into buckets (like percentiles or quartiles)
+* Useful in statistical analysis
+
+**Example:**
+
+```sql
+SELECT name, score,
+       NTILE(4) OVER (ORDER BY score) AS quartile
+FROM students;
+```
+
+This means:
+➡️ Divide students into 4 groups based on score (Q1, Q2, Q3, Q4).
+
+---
+
+# 🟩 **7) SUM() OVER() — Running Total**
+
+**Meaning:**
+“Calculate running total or running sum.”
+
+**Example:**
+
+```sql
+SELECT date, amount,
+       SUM(amount) OVER (ORDER BY date) AS running_total
+FROM sales;
+```
+
+This means:
+➡️ Keep adding amounts day by day and show the accumulated total.
+
+---
+
+# 🟩 **8) AVG() OVER() — Moving Average**
+
+**Example:**
+
+```sql
+SELECT date, temperature,
+       AVG(temperature) OVER (ORDER BY date ROWS 2 PRECEDING) AS moving_avg
+FROM weather;
+```
+
+This means:
+➡️ Average temperature for the last 3 days (current + previous 2).
+
+---
+
+# 🟩 **9) PARTITION BY**
+
+**Meaning:**
+“Break rows into groups, and then apply the window function separately for each group.”
+
+**Example:**
+
+```sql
+SELECT department, salary,
+       ROW_NUMBER() OVER (PARTITION BY department ORDER BY salary DESC) AS dept_rank
+FROM employees;
+```
+
+This means:
+➡️ Rank salaries **inside each department**, starting from 1 for the highest.
+
+---
+
+# 🟦 Summary of Window Function Use-Cases
+
+| Function         | What It Does                          |
+| ---------------- | ------------------------------------- |
+| **ROW_NUMBER()** | Unique rank, no ties                  |
+| **RANK()**       | Rank with ties (skips numbers)        |
+| **DENSE_RANK()** | Rank with ties (no skips)             |
+| **LAG()**        | Look at previous row                  |
+| **LEAD()**       | Look at next row                      |
+| **NTILE(n)**     | Divide into n equal groups            |
+| **SUM() OVER**   | Running total                         |
+| **AVG() OVER**   | Moving average                        |
+| **PARTITION BY** | Group rows logically without grouping |
+
+---
+
+# ✔️ Next Section?
+
+Choose the next topic:
+
+👉 **Date & Time Functions**
+👉 **Conditional Logic (CASE, COALESCE)**
+
+Just reply: **Continue Date Functions** or **Continue Conditional Logic**
