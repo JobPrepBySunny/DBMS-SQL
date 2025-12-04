@@ -1,0 +1,190 @@
+Here is the **Views** section — explained in the same simple, beginner-friendly style.
+
+---
+
+# 🟦 **Views**
+
+A **View** is like a *saved SQL query*.
+
+👉 It behaves like a virtual table.
+👉 You can SELECT from it like a table.
+👉 But it does **not** store actual data (unless it's a materialized view).
+
+Views are useful for:
+
+* Hiding complex queries
+* Simplifying repeated logic
+* Securing sensitive columns
+* Giving limited access to certain data
+
+---
+
+## **1) CREATE VIEW**
+
+**Meaning:**
+“Save this SELECT query as a virtual table.”
+
+**Explanation:**
+
+* Whatever the SELECT returns, the view shows.
+* You can use the view just like a table in SELECT queries.
+
+**Example:**
+
+```sql
+CREATE VIEW active_users AS
+SELECT id, name, email 
+FROM users
+WHERE status = 'active';
+```
+
+This means:
+➡️ Create a virtual table named *active_users* which contains only users whose status is "active".
+
+---
+
+## **2) SELECT FROM VIEW**
+
+**Meaning:**
+“Use the view like a normal table.”
+
+**Example:**
+
+```sql
+SELECT * FROM active_users;
+```
+
+This means:
+➡️ Show all rows from the virtual table `active_users`.
+
+---
+
+## **3) ALTER VIEW**
+
+**Meaning:**
+“Change the query behind the view.”
+
+**Explanation:**
+
+* Updates the logic of the view.
+* Structure changes but name remains same.
+
+**Example:**
+
+```sql
+ALTER VIEW active_users AS
+SELECT id, name, email, created_at
+FROM users
+WHERE status = 'active';
+```
+
+This means:
+➡️ Modify the view to also include the `created_at` column.
+
+---
+
+## **4) DROP VIEW**
+
+**Meaning:**
+“Delete the view.”
+
+**Explanation:**
+
+* Does not delete the underlying table.
+* Only removes the virtual table.
+
+**Example:**
+
+```sql
+DROP VIEW active_users;
+```
+
+This means:
+➡️ Remove the saved virtual table named `active_users`.
+
+---
+
+## **5) UPDATABLE VIEWS**
+
+Some views allow INSERT, UPDATE, DELETE.
+
+**Conditions for updatable view:**
+
+* Must be based on *one* table
+* Cannot use GROUP BY, DISTINCT, UNION, or aggregate functions
+* Must contain primary key of base table
+
+**Example:**
+
+```sql
+UPDATE active_users
+SET name = 'Sahil'
+WHERE id = 1;
+```
+
+This means:
+➡️ Change the name in the base `users` table through the view.
+
+---
+
+## **6) NON-UPDATABLE VIEWS**
+
+A view becomes non-updatable if it includes:
+❌ JOIN
+❌ GROUP BY
+❌ Aggregates (SUM, COUNT, etc.)
+❌ DISTINCT
+❌ UNION
+
+Example (non-updatable):
+
+```sql
+CREATE VIEW city_counts AS
+SELECT city, COUNT(*) AS total_users
+FROM users
+GROUP BY city;
+```
+
+You cannot:
+
+```sql
+UPDATE city_counts ...
+```
+
+Because:
+➡️ Every row is aggregated; it does not represent one actual row in the database.
+
+---
+
+## **7) Why Use Views?**
+
+### ✔️ To simplify complex SQL
+
+Instead of writing long joins every time, save them in a view.
+
+### ✔️ To hide sensitive data
+
+Show only limited columns through the view.
+
+### ✔️ To maintain consistency
+
+Everyone uses the same SELECT logic.
+
+### ✔️ To avoid rewriting queries
+
+Define once → use everywhere.
+
+---
+
+# ✔️ Next Section?
+
+Which topic next?
+
+👉 **Triggers**
+👉 **CTE (WITH, RECURSIVE)**
+👉 **Window Functions (ROW_NUMBER, LAG, LEAD)**
+👉 **Date & Time Functions**
+👉 **Conditional Logic**
+
+Tell me:
+**Continue Triggers** or whichever section you want next.
